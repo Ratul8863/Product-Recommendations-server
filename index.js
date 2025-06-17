@@ -100,10 +100,12 @@ app.get('/queries/recent', async (req, res) => {
 
 
 // My queries
-app.get('/queries', async (req, res) => {
+app.get('/queries',verifyToken, async (req, res) => {
   const email = req.query.email;
   const query = {};
-
+if (req.decoded.email !== email) {
+        return res.status(403).send({ message: 'Forbidden' });
+      }
   if (email) {
     query.userEmail = email;
   }
