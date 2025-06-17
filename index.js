@@ -148,6 +148,21 @@ app.put('/queries/:id', async (req, res) => {
 
 // Post a new recomendation
 
+
+
+app.post('/recommendations', async (req, res) => {
+  const newRec = req.body;
+  const result = await recommendationCollection.insertOne(newRec);
+  
+  // Increase recommendation count
+  await queryCollection.updateOne(
+    { _id: new ObjectId(newRec.queryId) },
+    { $inc: { recommendationCount: 1 } }
+  );
+  
+  res.send(result);
+});
+
 app.get('/recommendations', verifyToken, async (req, res) => {
   const email = req.query.email;
   if (req.decoded.email !== email) {
@@ -158,21 +173,6 @@ app.get('/recommendations', verifyToken, async (req, res) => {
   const recommendations = await recommendationCollection.find(query).sort({ createdAt: -1 }).toArray();
   res.send(recommendations);
 });
-
-
-app.post('/recommendations', async (req, res) => {
-  const newRec = req.body;
-  const result = await recommendationCollection.insertOne(newRec);
-
-  // Increase recommendation count
-  await queryCollection.updateOne(
-    { _id: new ObjectId(newRec.queryId) },
-    { $inc: { recommendationCount: 1 } }
-  );
-
-  res.send(result);
-});
-
 // Get recomendation 
 app.get('/recommendations/:queryId', async (req, res) => {
   const queryId = req.params.queryId;
@@ -186,9 +186,11 @@ app.get('/recommendations/:queryId', async (req, res) => {
 
 
 // GET recommendations made for user's queries
-app.get('/recommendations/user/:email', async (req, res) => {
+app.get('/recommendations/user/:email',verifyToken, async (req, res) => {
   const userEmail = req.params.email;
-
+if (req.decoded.email !== userEmail) {
+        return res.status(403).send({ message: 'Forbidden' });
+      }
   // First, get all queries posted by the user
   const userQueries = await queryCollection.find({ userEmail }).toArray();
   const queryIds = userQueries.map(query => query._id);
