@@ -178,14 +178,7 @@ app.get('/recommendations', verifyToken, async (req, res) => {
   res.send(recommendations);
 });
 // Get recomendation 
-app.get('/recommendations/:queryId', async (req, res) => {
-  const queryId = req.params.queryId;
-  const result = await recommendationCollection
-    .find({ queryId })
-    .sort({ createdAt: -1 })
-    .toArray();
-  res.send(result);
-});
+
 
 
 
