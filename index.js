@@ -150,10 +150,14 @@ app.put('/queries/:id', async (req, res) => {
 
 
 
-app.post('/recommendations', async (req, res) => {
+app.post('/recommendations',verifyToken, async (req, res) => {
   const newRec = req.body;
+   console.log(newRec)
+   if (req.decoded.email !== newRec.recommenderEmail) {
+        return res.status(403).send({ message: 'Forbidden' });
+      }
   const result = await recommendationCollection.insertOne(newRec);
-  
+ 
   // Increase recommendation count
   await queryCollection.updateOne(
     { _id: new ObjectId(newRec.queryId) },
@@ -265,8 +269,8 @@ app.patch('/queries/like/:id', async (req, res) => {
   }
 });
 
- await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+//  await client.db("admin").command({ ping: 1 });
+//     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
   } finally {
     // Ensures that the client will close when you finish/error
