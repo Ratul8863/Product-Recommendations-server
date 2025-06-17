@@ -7,10 +7,23 @@ require('dotenv').config();
 
 const app = express(); 
 const port = process.env.PORT || 5000; 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://product-recommendation-byratul.web.app',
+  'https://product-recommendation-byratul.firebaseapp.com',
+];
+
 app.use(cors({
-  origin: 'http://localhost:5173', 
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
-})); 
+}));
+
 app.use(express.json()) 
 
 app.use(cookieParser());
@@ -72,11 +85,13 @@ console.log(userdata)
 
 
 
-res.cookie('token', token,{
+res.cookie('token', token, {
   httpOnly: true,
-    secure: false,
-    sameSite: 'lax'
-})
+  secure: true,          // Required for cross-site cookie over HTTPS
+  sameSite: 'None',      // Required for cross-origin cookie
+  maxAge: 24 * 60 * 60 * 1000 // 1 day
+});
+
   res.send({success: true})
 })
 
