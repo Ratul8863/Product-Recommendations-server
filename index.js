@@ -85,7 +85,11 @@ res.cookie('token', token,{
     // query related
 
     // POST: Submit a new query
-
+app.post('/queries', async (req, res) => {
+  const newQuery = req.body;
+  const result = await queryCollection.insertOne(newQuery);
+  res.send(result);
+});
 
 // GET: Get 6 most recent queries
 app.get('/queries/recent', async (req, res) => {
