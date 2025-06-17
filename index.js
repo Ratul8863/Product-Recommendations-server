@@ -36,9 +36,7 @@ const verifyToken = (req, res, next) => {
 
 
 
-//Product_Recommendation 
-//fA0lxd1yDiNYakUW
-// console.log(process.env.MONGODB_URI)
+
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -99,21 +97,30 @@ app.get('/queries/recent', async (req, res) => {
 });
 
 
-// My queries
 app.get('/queries',verifyToken, async (req, res) => {
   const email = req.query.email;
   const query = {};
-if (req.decoded.email !== email) {
-        return res.status(403).send({ message: 'Forbidden' });
-      }
+
   if (email) {
     query.userEmail = email;
+    if (req.decoded.email !== email) {
+        return res.status(403).send({ message: 'Forbidden' });
+      }
   }
 
   const cursor = queryCollection.find(query).sort({ createdAt: -1 });
   const result = await cursor.toArray();
   res.send(result);
 });
+
+app.get('/queries', async (req, res) => {
+  const email = req.query.email;
+  const cursor = queryCollection.find().sort({ createdAt: -1 });
+  const result = await cursor.toArray();
+  res.send(result);
+});
+// My queries
+
 
 const { ObjectId } = require('mongodb');
 
