@@ -80,11 +80,17 @@ res.cookie('token', token,{
     // query related
 
     // POST: Submit a new query
-app.post('/queries', async (req, res) => {
+app.post('/queries', verifyToken, async (req, res) => {
   const newQuery = req.body;
+
+  if (req.decoded.email !== newQuery.userEmail) {
+    return res.status(403).send({ message: 'Forbidden' });
+  }
+
   const result = await queryCollection.insertOne(newQuery);
   res.send(result);
 });
+
 
 // GET: Get 6 most recent queries
 app.get('/queries/recent', async (req, res) => {
@@ -96,7 +102,12 @@ app.get('/queries/recent', async (req, res) => {
   res.send(recentQueries);
 });
 
-
+app.get('/queries/all', async (req, res) => {
+  const email = req.query.email;
+  const cursor = queryCollection.find().sort({ createdAt: -1 });
+  const result = await cursor.toArray();
+  res.send(result);
+});
 app.get('/queries',verifyToken, async (req, res) => {
   const email = req.query.email;
   const query = {};
@@ -113,12 +124,7 @@ app.get('/queries',verifyToken, async (req, res) => {
   res.send(result);
 });
 
-app.get('/queries', async (req, res) => {
-  const email = req.query.email;
-  const cursor = queryCollection.find().sort({ createdAt: -1 });
-  const result = await cursor.toArray();
-  res.send(result);
-});
+
 // My queries
 
 
@@ -126,11 +132,27 @@ const { ObjectId } = require('mongodb');
 
 
 // Delete Query
-app.delete('/queries/:id', async (req, res) => {
+app.delete('/queries/:id', verifyToken, async (req, res) => {
   const id = req.params.id;
+  const query = await queryCollection.findOne({ _id: new ObjectId(id) });
+
+  if (!query) {
+    return res.status(404).send({ message: 'Query not found' });
+  }
+
+  if (req.decoded.email !== query.userEmail) {
+    return res.status(403).send({ message: 'Forbidden' });
+  }
+
   const result = await queryCollection.deleteOne({ _id: new ObjectId(id) });
   res.send(result);
 });
+
+// app.delete('/queries/:id', async (req, res) => {
+//   const id = req.params.id;
+//   const result = await queryCollection.deleteOne({ _id: new ObjectId(id) });
+//   res.send(result);
+// });
 
 
 // GET single query
@@ -141,9 +163,20 @@ app.get('/queries/:id', async (req, res) => {
 });
 
 // PUT (update) query
-app.put('/queries/:id', async (req, res) => {
+app.put('/queries/:id', verifyToken, async (req, res) => {
   const id = req.params.id;
   const updated = req.body;
+
+  const query = await queryCollection.findOne({ _id: new ObjectId(id) });
+
+  if (!query) {
+    return res.status(404).send({ message: 'Query not found' });
+  }
+
+  if (req.decoded.email !== query.userEmail) {
+    return res.status(403).send({ message: 'Forbidden' });
+  }
+
   const result = await queryCollection.updateOne(
     { _id: new ObjectId(id) },
     { $set: updated }
@@ -184,8 +217,11 @@ app.get('/recommendations', verifyToken, async (req, res) => {
   res.send(recommendations);
 });
 // Get recomendation 
-app.get('/recommendations/:queryId', async (req, res) => {
+app.get('/recommendations/:queryId',verifyToken, async (req, res) => {
   const queryId = req.params.queryId;
+if (!req.decoded.email) {
+        return res.status(403).send({ message: 'Forbidden' });
+      }
   const result = await recommendationCollection
     .find({ queryId })
     .sort({ createdAt: -1 })
