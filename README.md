@@ -35,8 +35,10 @@ https://product-recommendation-server.vercel.app/
 
 ---
 - Step 1: Clone the repository
+  --git clone https://github.com/Ratul8863/Product-Recommendations-server.git
 
 - Step 2: Navigate into the project folder
+  --cd Product-Recommendations-server
 
 - Step 3: Install dependencies
 npm install
@@ -50,7 +52,7 @@ ACCESS_TOKEN_SECRET=your_jwt_secret
 CLIENT_URL=http://localhost:5173
 
 - Step 5: Start the server
-node index.js
+-- node index.js
 - Or, for development with auto-restart
 npm install -g nodemon
 nodemon index.js
