@@ -35,16 +35,15 @@ https://product-recommendation-server.vercel.app/
 
 ---
 - Step 1: Clone the repository
-git clone https://github.com/Ratul8863/Product-Recommendations-server.git
 
 - Step 2: Navigate into the project folder
-cd Product-Recommendations-server
 
 - Step 3: Install dependencies
 npm install
 
 - Step 4: Create a .env file 
 Example :
+
 PORT=5000
 DB_URI=your_mongodb_connection_string
 ACCESS_TOKEN_SECRET=your_jwt_secret
