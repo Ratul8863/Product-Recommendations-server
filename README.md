@@ -25,13 +25,15 @@ https://product-recommendation-server.vercel.app/
 
 ## 🛠️ Tech Stack
 
-- **Node.js**
-- **Express.js**
-- **MongoDB** with **Mongoose**
-- **JWT (jsonwebtoken)**
-- **Dotenv**
-- **Cors**
-- **Cookie-parser**
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Mongoose](https://img.shields.io/badge/Mongoose-880000?style=for-the-badge)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge)
+![Dotenv](https://img.shields.io/badge/Dotenv-232F3E?style=for-the-badge)
+![CORS](https://img.shields.io/badge/CORS-4B32C3?style=for-the-badge)
+![Cookie Parser](https://img.shields.io/badge/Cookie--parser-ffc107?style=for-the-badge)
+
 
 ---
 - Step 1: Clone the repository
